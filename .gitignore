@@ -7,6 +7,9 @@
 OpenSceneGraph-Data
 OpenSceneGraph-3.6.5-VC2022-64-Debug
 
+# data
+!Data/
+
 # User-specific files
 *.rsuser
 *.suo
