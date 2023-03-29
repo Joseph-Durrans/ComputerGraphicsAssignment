@@ -5,49 +5,51 @@
 
 #include <TrafficSystem/TrafficLightFacade.h>
 
-#define WALK_SHADER
+//#define WALK_SHADER
 
-class DemoTrafficLight: public TrafficSystem::TrafficLightFacade, public osg::Callback
-{
-public:
-	enum TLState
+namespace AnimationViewerTexture {
+	class DemoTrafficLight : public TrafficSystem::TrafficLightFacade, public osg::Callback
 	{
-		Stop,
-		Go,
-	};
+	public:
+		enum TLState
+		{
+			Stop,
+			Go,
+		};
 
-	DemoTrafficLight(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible);
-	virtual ~DemoTrafficLight();
+		DemoTrafficLight(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible);
+		virtual ~DemoTrafficLight();
 
-	virtual osg::Vec3f getFacadeCollisionPoint() override;
+		virtual osg::Vec3f getFacadeCollisionPoint() override;
 
-	TLState getState();
-	void setState(TLState eState);
+		TLState getState();
+		void setState(TLState eState);
 
-	void toggleState();
+		void toggleState();
 
 #ifdef WALK_SHADER
-	virtual bool run(osg::Object* object, osg::Object* data);
+		virtual bool run(osg::Object* object, osg::Object* data);
 #endif
 
-protected:
-	osg::MatrixTransform* m_pSelectTransform;
-	TLState m_eState;
+	protected:
+		osg::MatrixTransform* m_pSelectTransform;
+		TLState m_eState;
 
 
-private:
-	static osg::Material* sm_pStopMaterial;
-	static osg::Material* sm_pGoMaterial;
+	private:
+		static osg::Material* sm_pStopMaterial;
+		static osg::Material* sm_pGoMaterial;
 
-	osg::Geode* m_pRedLamp;
-	osg::Geode* m_pAmberLamp;
-	osg::Geode* m_pGreenLamp;
+		osg::Geode* m_pRedLamp;
+		osg::Geode* m_pAmberLamp;
+		osg::Geode* m_pGreenLamp;
 
 #ifdef WALK_SHADER
-	osg::Uniform* m_pWalkTimeUniform;
-	osg::Uniform* m_pWalkStateUniform;
+		osg::Uniform* m_pWalkTimeUniform;
+		osg::Uniform* m_pWalkStateUniform;
 #else
-	osg::Switch* m_pTextureSwitch;
+		osg::Switch* m_pTextureSwitch;
 #endif
-};
+	};
+}
 

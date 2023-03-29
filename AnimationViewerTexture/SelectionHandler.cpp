@@ -1,38 +1,38 @@
 #include "SelectionHandler.h"
 
-SelectionHandler::SelectionHandler(): m_pFacade(0)
+AnimationViewerTexture::SelectionHandler::SelectionHandler(): m_pFacade(0)
 {
 }
 
-SelectionHandler::SelectionHandler(Common::Facade* pFacade): m_pFacade(pFacade)
+AnimationViewerTexture::SelectionHandler::SelectionHandler(Common::Facade* pFacade): m_pFacade(pFacade)
 {
 }
 
-SelectionHandler::~SelectionHandler()
+AnimationViewerTexture::SelectionHandler::~SelectionHandler()
 {
 }
 
-osg::Object* SelectionHandler::cloneType() const
+osg::Object* AnimationViewerTexture::SelectionHandler::cloneType() const
 {
     return new SelectionHandler();
 }
 
-osg::Object* SelectionHandler::clone(const osg::CopyOp&) const
+osg::Object* AnimationViewerTexture::SelectionHandler::clone(const osg::CopyOp&) const
 {
     return new SelectionHandler(m_pFacade);
 }
 
-const char* SelectionHandler::libraryName() const
+const char* AnimationViewerTexture::SelectionHandler::libraryName() const
 {
     return "None";
 }
 
-const char* SelectionHandler::className() const
+const char* AnimationViewerTexture::SelectionHandler::className() const
 {
     return "SelectionHandler";
 }
 
-Common::Facade* SelectionHandler::facade()
+Common::Facade* AnimationViewerTexture::SelectionHandler::facade()
 {
     return m_pFacade;
 }

@@ -114,6 +114,9 @@
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);osgd.lib;osgViewerd.lib;osgGAd.lib;osgTextd.lib;osgDBd.lib;Common.lib;TrafficSystem.lib;Assignment.lib;OpenGL32.lib;GLU32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\OpenSceneGraph-3.6.5-VC2022-64-Debug\lib;</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>..\raaCF debugexe $(ProjectName) ..\OpenSceneGraph-3.6.5-VC2022-64-Debug</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

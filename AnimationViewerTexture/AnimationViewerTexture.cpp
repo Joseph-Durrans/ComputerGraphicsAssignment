@@ -111,8 +111,8 @@ int main(int argc, char* argv[])
 
 	Common::FacadeManufactory::start();
 	Common::FacadeManufactory::instance()->addFactory("RoadTile", new TrafficSystem::RoadFacadeFactory());
-	Common::FacadeManufactory::instance()->addFactory("TrafficLight", new DemoTrafficLightFactory());
-	Common::FacadeManufactory::instance()->addFactory("AnimatedCar", new DemoAnimatedCarFactory());
+	Common::FacadeManufactory::instance()->addFactory("TrafficLight", new AnimationViewerTexture::DemoTrafficLightFactory());
+	Common::FacadeManufactory::instance()->addFactory("AnimatedCar", new AnimationViewerTexture::DemoAnimatedCarFactory());
 	TrafficSystem::Collider::toggleVisible();
 	Common::AssetLibrary::start();
 
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 	fTime = addControlPoint("t3", "0", pPath, fTime, fSpeed, vLastPos);
 
 	// attach animation path to car
-	if(DemoAnimatedCar* pAC=dynamic_cast<DemoAnimatedCar*>(Common::Facade::findFacade("Car")))
+	if(AnimationViewerTexture::DemoAnimatedCar* pAC=dynamic_cast<AnimationViewerTexture::DemoAnimatedCar*>(Common::Facade::findFacade("Car")))
 	{
 		pAC->setAnimationPath(pPath);
 	}
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
 	viewer.addEventHandler(new osgViewer::RecordCameraPathHandler);
 	viewer.addEventHandler(new osgViewer::LODScaleHandler);
 	viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
-	viewer.addEventHandler(new EventHandler());
+	viewer.addEventHandler(new AnimationViewerTexture::EventHandler());
 
 	viewer.setSceneData(g_pRoot);
 

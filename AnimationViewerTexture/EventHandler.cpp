@@ -10,17 +10,17 @@
 
 #include "DemoAnimatedCar.h"
 
-EventHandler::EventHandler()
+AnimationViewerTexture::EventHandler::EventHandler()
 {
 
 }
 
-EventHandler::~EventHandler()
+AnimationViewerTexture::EventHandler::~EventHandler()
 {
 
 }
 
-bool EventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*)
+bool AnimationViewerTexture::EventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, osg::Object*, osg::NodeVisitor*)
 {
     // detect mouse press and setup intersection test
     if (ea.getEventType() & osgGA::GUIEventAdapter::PUSH && ea.getButtonMask() & osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON)
@@ -51,7 +51,7 @@ bool EventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
                         {
                             std::cout << "Clicked car" << std::endl;
                         }
-                        else if (DemoTrafficLight* pTL = dynamic_cast<DemoTrafficLight*>(pSH->facade()))
+                        else if (AnimationViewerTexture::DemoTrafficLight* pTL = dynamic_cast<AnimationViewerTexture::DemoTrafficLight*>(pSH->facade()))
                         {
                             pTL->toggleState();
                         }

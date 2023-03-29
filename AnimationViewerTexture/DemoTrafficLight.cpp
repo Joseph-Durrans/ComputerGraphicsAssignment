@@ -11,10 +11,10 @@
 
 #include <osg/Texture2D>
 
-osg::Material* DemoTrafficLight::sm_pStopMaterial=0;
-osg::Material* DemoTrafficLight::sm_pGoMaterial = 0;
+osg::Material* AnimationViewerTexture::DemoTrafficLight::sm_pStopMaterial=0;
+osg::Material* AnimationViewerTexture::DemoTrafficLight::sm_pGoMaterial = 0;
 
-DemoTrafficLight::DemoTrafficLight(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible): TrafficLightFacade(sName, pAsset,m, bVisible), m_pSelectTransform(new osg::MatrixTransform()), m_pRedLamp(0), m_pGreenLamp(0), m_pAmberLamp(0)
+AnimationViewerTexture::DemoTrafficLight::DemoTrafficLight(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible): TrafficLightFacade(sName, pAsset,m, bVisible), m_pSelectTransform(new osg::MatrixTransform()), m_pRedLamp(0), m_pGreenLamp(0), m_pAmberLamp(0)
 {
     // setup materials for stop and go
     if (!sm_pGoMaterial)
@@ -184,11 +184,11 @@ DemoTrafficLight::DemoTrafficLight(std::string sName, osg::Node* pAsset, osg::Ma
     m_pCollisionTarget->setMatrix(osg::Matrixf::identity());
 }
 
-DemoTrafficLight::~DemoTrafficLight()
+AnimationViewerTexture::DemoTrafficLight::~DemoTrafficLight()
 {
 }
 
-osg::Vec3f DemoTrafficLight::getFacadeCollisionPoint()
+osg::Vec3f AnimationViewerTexture::DemoTrafficLight::getFacadeCollisionPoint()
 {
     // currently this is calculating the world position target omn every frame. Ideally, because this is a static object,
     // this position could be calculated in the constructor, stored as a member variable and returned here without repeating the calculation
@@ -202,12 +202,12 @@ osg::Vec3f DemoTrafficLight::getFacadeCollisionPoint()
     return t;
 }
 
-DemoTrafficLight::TLState DemoTrafficLight::getState()
+AnimationViewerTexture::DemoTrafficLight::TLState AnimationViewerTexture::DemoTrafficLight::getState()
 {
     return m_eState;
 }
 
-void DemoTrafficLight::setState(TLState eState)
+void AnimationViewerTexture::DemoTrafficLight::setState(TLState eState)
 {
     // tis is used to set the state of the lamps and the textures
     m_eState = eState;
@@ -236,7 +236,7 @@ void DemoTrafficLight::setState(TLState eState)
     }
 }
 
-void DemoTrafficLight::toggleState()
+void AnimationViewerTexture::DemoTrafficLight::toggleState()
 {
     if (m_eState == Go) setState(Stop);
     else setState(Go);

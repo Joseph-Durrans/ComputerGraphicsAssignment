@@ -9,7 +9,7 @@
 #include "DemoTrafficLight.h"
 
 
-DemoAnimatedCar::DemoAnimatedCar(std::string sName, osg::Node* pAsset, osg::Matrix m, bool bVisible): TrafficSystem::CarFacade(sName, pAsset, m, bVisible), m_pAnimationTransform(new osg::MatrixTransform()), m_pCollisionTarget(new osg::MatrixTransform()), m_pCamera(0)
+AnimationViewerTexture::DemoAnimatedCar::DemoAnimatedCar(std::string sName, osg::Node* pAsset, osg::Matrix m, bool bVisible): TrafficSystem::CarFacade(sName, pAsset, m, bVisible), m_pAnimationTransform(new osg::MatrixTransform()), m_pCollisionTarget(new osg::MatrixTransform()), m_pCamera(0)
 {
 	// insert the animation transform inot the facade sub tree to allow it to control an empty space transform
 	// Take note of the order of these operations. This avoids the existing objects being unref() and deleted
@@ -34,11 +34,11 @@ DemoAnimatedCar::DemoAnimatedCar(std::string sName, osg::Node* pAsset, osg::Matr
 	m_pAnimationTransform->addChild(m_pCollisionTarget);
 }
 
-DemoAnimatedCar::~DemoAnimatedCar()
+AnimationViewerTexture::DemoAnimatedCar::~DemoAnimatedCar()
 {
 }
 
-void DemoAnimatedCar::setAnimationPath(osg::AnimationPath* pPath)
+void AnimationViewerTexture::DemoAnimatedCar::setAnimationPath(osg::AnimationPath* pPath)
 {
 	// add the animation path to the facade - connect it as a callback to the new animation transform
 	osg::AnimationPathCallback* pAPC = new osg::AnimationPathCallback(pPath);
@@ -46,7 +46,7 @@ void DemoAnimatedCar::setAnimationPath(osg::AnimationPath* pPath)
 }
 
 //this is the callback fundtion - called on each update traversal
-bool DemoAnimatedCar::run(osg::Object* object, osg::Object* data)
+bool AnimationViewerTexture::DemoAnimatedCar::run(osg::Object* object, osg::Object* data)
 {
 
 
@@ -102,21 +102,17 @@ bool DemoAnimatedCar::run(osg::Object* object, osg::Object* data)
 	return false;
 }
 
-osg::Vec3f DemoAnimatedCar::getFacadeCollisionPoint()
+osg::Vec3f AnimationViewerTexture::DemoAnimatedCar::getFacadeCollisionPoint()
 {
 	return osg::Vec3f();
 }
 
-void DemoAnimatedCar::setCamera(osg::Camera* pCamera)
+void AnimationViewerTexture::DemoAnimatedCar::setCamera(osg::Camera* pCamera)
 {
-
-	m_pCamera = pCamera;
-
-	
-
+	m_pCamera = pCamera;	
 }
 
-osg::Camera* DemoAnimatedCar::camera()
+osg::Camera* AnimationViewerTexture::DemoAnimatedCar::camera()
 {
 	return m_pCamera;
 }

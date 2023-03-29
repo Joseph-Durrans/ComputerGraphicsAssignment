@@ -2,16 +2,17 @@
 
 #include <Common/FacadeFactoryA.h>
 
+namespace AnimationViewerTexture {
+	class DemoAnimatedCarFactory : public Common::FacadeFactoryA
+	{
+	public:
+		DemoAnimatedCarFactory();
+		virtual ~DemoAnimatedCarFactory();
 
-class DemoAnimatedCarFactory : public Common::FacadeFactoryA
-{
-public:
-	DemoAnimatedCarFactory();
-	virtual ~DemoAnimatedCarFactory();
 
+		// Inherited via FacadeFactoryA
+		virtual Common::Facade* create(std::string sName, osg::Node* pModelRoot, osg::Matrixf rTransform, bool bVisible) override;
 
-	// Inherited via FacadeFactoryA
-	virtual Common::Facade* create(std::string sName, osg::Node* pModelRoot, osg::Matrixf rTransform, bool bVisible) override;
-
-};
+	};
+}
 
