@@ -3,28 +3,21 @@
 #include <windows.h>
 #include <osg/Material>
 
+#include "LightControl.h"
+
 #include <TrafficSystem/TrafficLightFacade.h>
 
 namespace Assignment
 {
-	class ControllableTrafficLightFacade: public TrafficSystem::TrafficLightFacade
+	class ControllableTrafficLightFacade: public TrafficSystem::TrafficLightFacade, public LightControl
 	{
 	public:
-		enum LightState
-		{
-			STOP,
-			READY,
-			GO,
-			SLOW,
-			ALL,
-			NONE,
-		};
 
 
 		ControllableTrafficLightFacade(std::string sname, osg::Node* pAsset, osg::Matrixf m, bool bVisible);
 		virtual ~ControllableTrafficLightFacade();
 
-		void setState(LightState eState);
+		virtual void setState(LightControl::LightState eState);
 	protected:
 		static osg::Material* sm_pRedOn;
 		static osg::Material* sm_pGreenOn;
@@ -36,5 +29,8 @@ namespace Assignment
 		osg::Geode* m_pAmber;
 		osg::Geode* m_pRed;
 		osg::Geode* m_pGreen;
+
+		// Inherited via LightControl
+		virtual osg::Node* rootNode() override;
 	};
 }

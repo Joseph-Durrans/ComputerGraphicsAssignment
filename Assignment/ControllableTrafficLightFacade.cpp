@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <osg/Geode>
 
-
+#include "LightControl.h"
 #include "ControllableTrafficLightFacade.h"
 
 #include <Common/NodeFinderT.h>
@@ -97,39 +97,45 @@ Assignment::ControllableTrafficLightFacade::~ControllableTrafficLightFacade()
 	if (sm_pGreenOff) sm_pGreenOff->unref();
 }
 
-void Assignment::ControllableTrafficLightFacade::setState(LightState eState)
+void Assignment::ControllableTrafficLightFacade::setState(LightControl::LightState eState)
 {
+	m_eState = eState;
 	switch (eState)
 	{
-	case STOP:
+	case LightControl::STOP:
 		m_pRed->getOrCreateStateSet()->setAttributeAndModes(sm_pRedOn);
 		m_pAmber->getOrCreateStateSet()->setAttributeAndModes(sm_pAmberOff);
 		m_pGreen->getOrCreateStateSet()->setAttributeAndModes(sm_pGreenOff);
 		break;
-	case READY:
+	case LightControl::READY:
 		m_pRed->getOrCreateStateSet()->setAttributeAndModes(sm_pRedOn);
 		m_pAmber->getOrCreateStateSet()->setAttributeAndModes(sm_pAmberOn);
 		m_pGreen->getOrCreateStateSet()->setAttributeAndModes(sm_pGreenOff);
 		break;
-	case GO:
+	case LightControl::GO:
 		m_pRed->getOrCreateStateSet()->setAttributeAndModes(sm_pRedOff);
 		m_pAmber->getOrCreateStateSet()->setAttributeAndModes(sm_pAmberOff);
 		m_pGreen->getOrCreateStateSet()->setAttributeAndModes(sm_pGreenOn);
 		break;
-	case SLOW:
+	case LightControl::SLOW:
 		m_pRed->getOrCreateStateSet()->setAttributeAndModes(sm_pRedOff);
 		m_pAmber->getOrCreateStateSet()->setAttributeAndModes(sm_pAmberOn);
 		m_pGreen->getOrCreateStateSet()->setAttributeAndModes(sm_pGreenOff);
 		break;
-	case ALL:
+	case LightControl::ALL:
 		m_pRed->getOrCreateStateSet()->setAttributeAndModes(sm_pRedOn);
 		m_pAmber->getOrCreateStateSet()->setAttributeAndModes(sm_pAmberOn);
 		m_pGreen->getOrCreateStateSet()->setAttributeAndModes(sm_pGreenOn);
 		break;
-	case NONE:
+	case LightControl::NONE:
 		m_pRed->getOrCreateStateSet()->setAttributeAndModes(sm_pRedOff);
 		m_pAmber->getOrCreateStateSet()->setAttributeAndModes(sm_pAmberOff);
 		m_pGreen->getOrCreateStateSet()->setAttributeAndModes(sm_pGreenOff);
 		break;
 	}
+}
+
+osg::Node* Assignment::ControllableTrafficLightFacade::rootNode()
+{
+	return m_pRoot;
 }

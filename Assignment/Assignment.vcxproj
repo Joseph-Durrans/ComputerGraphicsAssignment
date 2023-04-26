@@ -19,18 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedCar.h" />
+    <ClInclude Include="AnimatedCarFactory.h" />
     <ClInclude Include="ControllableTrafficLightFacade.h" />
     <ClInclude Include="ControllableTrafficLightFacadeFactory.h" />
     <ClInclude Include="Example.h" />
+    <ClInclude Include="LightControl.h" />
     <ClInclude Include="RoadTileLightsFacade.h" />
     <ClInclude Include="RoadTileLightsFacadeFactory.h" />
+    <ClInclude Include="TrafficLightGroup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedCar.cpp" />
+    <ClCompile Include="AnimatedCarFactory.cpp" />
     <ClCompile Include="ControllableTrafficLightFacade.cpp" />
     <ClCompile Include="ControllableTrafficLightFacadeFactory.cpp" />
     <ClCompile Include="Example.cpp" />
+    <ClCompile Include="LightControl.cpp" />
     <ClCompile Include="RoadTileLightsFacade.cpp" />
     <ClCompile Include="RoadTileLightsFacadeFactory.cpp" />
+    <ClCompile Include="TrafficLightGroup.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

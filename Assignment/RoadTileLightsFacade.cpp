@@ -5,22 +5,23 @@
 
 Assignment::RoadTileLightsFacade::RoadTileLightsFacade(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible): TrafficSystem::RoadFacade(sName, pAsset, m, bVisible), m_uiCount(0), m_itCurrentLight(m_lLights.end())
 {
-	pAsset->setUpdateCallback(this);
+	m_pTransformation->setUpdateCallback(this);
 }
 
 Assignment::RoadTileLightsFacade::~RoadTileLightsFacade()
 {
 }
 
-void Assignment::RoadTileLightsFacade::addLight(ControllableTrafficLightFacade* pCTL)
+
+void Assignment::RoadTileLightsFacade::addLightGroup(TrafficLightGroup* pLG)
 {
-	if(pCTL)
+	if (pLG)
 	{
-		m_lLights.push_back(pCTL);
+		m_lLights.push_back(pLG);
 
-		m_pTransformation->addChild(pCTL->root());
+		m_pTransformation->addChild(pLG->root());
 
-		pCTL->setState(ControllableTrafficLightFacade::STOP);
+		pLG->setState(ControllableTrafficLightFacade::STOP);
 	}
 }
 

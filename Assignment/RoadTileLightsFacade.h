@@ -1,6 +1,7 @@
 #pragma once
 
 #include <TrafficSystem/RoadFacade.h>
+#include "TrafficLightGroup.h"
 
 namespace TrafficSystem
 {
@@ -9,9 +10,9 @@ namespace TrafficSystem
 
 namespace Assignment
 {
-	class ControllableTrafficLightFacade;
+//	class ControllableTrafficLightFacade;
 
-	typedef std::list<ControllableTrafficLightFacade*> Lights;
+	typedef std::list<TrafficLightGroup*> Lights;
 
 	class RoadTileLightsFacade: public TrafficSystem::RoadFacade, public osg::Callback
 	{
@@ -19,7 +20,8 @@ namespace Assignment
 		RoadTileLightsFacade(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible);
 		virtual ~RoadTileLightsFacade();
 
-		void addLight(ControllableTrafficLightFacade* pCTF);
+//		void addLight(ControllableTrafficLightFacade* pCTF);
+		void addLightGroup(TrafficLightGroup* pLG);
 
 		virtual bool run(osg::Object* object, osg::Object* data);
 	protected:

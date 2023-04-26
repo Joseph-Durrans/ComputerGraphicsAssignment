@@ -35,10 +35,12 @@
 #include <Assignment/Geometry.h>
 #include <Assignment/CubeGeometry.h>
 
+#include <Assignment/LightControl.h>
+#include <Assignment/TrafficLightGroup.h>
+
+
 #include <Common/NodeFinderT.h>
 
-
-// have to add these to new library they are currently in demo
 #include <Assignment/AnimatedCar.h>
 #include <Assignment/AnimatedCarFactory.h>
 
@@ -187,9 +189,20 @@ void createRoadNetwork() {
 			osg::Matrixf::rotate(osg::DegreesToRadians(-90.0f), 0.0f, 0.0f, 1.0f) *
 			osg::Matrixf::translate(180.0f, 180.0f, 0.0f);
 
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight1", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL2, true)));
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight2", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL3, true)));
+		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup();
+		Assignment::TrafficLightGroup* pTG1 = new Assignment::TrafficLightGroup();
+
+
+
+		pTG0->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
+		
+		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight1", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL2, true)));
+		
+		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight2", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL3, true)));
+	
+	
+		pRL->addLightGroup(pTG0);
+		pRL->addLightGroup(pTG1);
 	}
 
 	// Find x juction and create lights
@@ -213,10 +226,18 @@ void createRoadNetwork() {
 			osg::Matrixf::rotate(osg::DegreesToRadians(-90.0f), 0.0f, 0.0f, 1.0f) *
 			osg::Matrixf::translate(180.0f, 180.0f, 0.0f);
 
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight1", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL1, true)));
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight2", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL2, true)));
-		pRL->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight3", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL3, true)));
+
+		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup();
+		Assignment::TrafficLightGroup* pTG1 = new Assignment::TrafficLightGroup();
+
+		pTG0->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
+		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight1", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL1, true)));
+		pTG0->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight2", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL2, true)));
+		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight3", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL3, true)));
+
+
+		pRL->addLightGroup(pTG0);
+		pRL->addLightGroup(pTG1);
 	}
 }
 
