@@ -12,10 +12,10 @@ namespace Assignment
 	class ControllableTrafficLightFacade: public TrafficSystem::TrafficLightFacade, public LightControl
 	{
 	public:
-
-
 		ControllableTrafficLightFacade(std::string sname, osg::Node* pAsset, osg::Matrixf m, bool bVisible);
 		virtual ~ControllableTrafficLightFacade();
+
+		virtual osg::Vec3f getFacadeCollisionPoint() override;
 
 		virtual void setState(LightControl::LightState eState);
 	protected:
@@ -29,6 +29,8 @@ namespace Assignment
 		osg::Geode* m_pAmber;
 		osg::Geode* m_pRed;
 		osg::Geode* m_pGreen;
+
+		osg::Vec3f sm_pLocalPosition;
 
 		// Inherited via LightControl
 		virtual osg::Node* rootNode() override;

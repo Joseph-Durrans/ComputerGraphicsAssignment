@@ -2,6 +2,7 @@
 #include <osg/Geode>
 
 #include "AnimatedCar.h"
+#include "ControllableTrafficLightFacade.h"
 
 #include <iostream>
 
@@ -25,7 +26,7 @@ Assignment::AnimatedCar::AnimatedCar(std::string sName, osg::Node* pAsset, osg::
 	setBound(osg::Vec3f(4.0f, 2.0f, 0.8f));
 
 
-	// add a collision detector to the bax of the car - we will not be using this, but can be used to stop cars running into each other
+	// add a collision detector to the back of the car - we will not be using this, but can be used to stop cars running into each other
 	m_pCollisionTarget->addChild(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0f, 0.0f, 0.0f), 20.0f)));
 	m_pCollisionTarget->setMatrix(osg::Matrix::translate(-110.0f, 0.0f, 0.0f));
 	m_pAnimationTransform->addChild(m_pCollisionTarget);
@@ -60,9 +61,10 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 		// use dynamic cast to determine whether this object implements the collision target interface
 		if (TrafficSystem::CollisionTarget* pCT = dynamic_cast<TrafficSystem::CollisionTarget*>(it->second))
 		{
-			// now we have a collision target, check to see if it belongs to a traffic light
-			if (TrafficSystem::TrafficLightFacade* pTrafficLightFacade = dynamic_cast<TrafficSystem::TrafficLightFacade*>(pCT))
+			// now we have a collision target, check to see if it belongs to a traffic light with working controls
+			if (Assignment::LightControl* pTrafficLightFacade = dynamic_cast<Assignment::LightControl*>(pCT))
 			{
+
 				// get world position collision point
 				osg::Vec3f vTargetPosition = pCT->getFacadeCollisionPoint();
 
@@ -73,8 +75,46 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 				// finally test to see if the collision target is inside the detector volume
 				if (m_pGeode->getBoundingBox().contains(vTargetPosition))
 				{
-					std::cout << "Ouch, I have hit a traffic light: " << pTrafficLightFacade->root()->getName() << std::endl;
+					if (m_pAnimationTransform && m_pAnimationTransform->getUpdateCallback())
+					{
+						if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback()))
+						{
+							if (pTrafficLightFacade->getState() == Assignment::LightControl::STOP) 
+							{
+								pAPC->setPause(true);
+							}
+							else 
+							{
+								if (pAPC->getPause()) pAPC->setPause(false);
+							}
+						}
+					}
 				}
+			}
+
+			if (Assignment::AnimatedCar* pAnimatedCarFacade = dynamic_cast<Assignment::AnimatedCar*>(pCT))
+			{
+				// get world position collision point
+				osg::Vec3f vTargetPosition = pCT->getFacadeCollisionPoint();
+
+				// now we need to transfer the world position collision traget to the frame of reference (coordinate system)
+				// for the collide volume
+				vTargetPosition = vTargetPosition * mW2L;
+
+				if (m_pGeode->getBoundingBox().contains(vTargetPosition)) {
+					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback()))
+					{
+						pAPC->setPause(true);
+					}
+				}
+				else {
+					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback())) {
+						if (pAPC->getPause()) pAPC->setPause(false);
+					}
+
+				}
+
+		
 			}
 		}
 	}
@@ -84,5 +124,16 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 
 osg::Vec3f Assignment::AnimatedCar::getFacadeCollisionPoint()
 {
-	return osg::Vec3f();
+	// old return osg::Vec3f();
+
+		// currently this is calculating the world position target omn every frame. Ideally, because this is a static object,
+// this position could be calculated in the constructor, stored as a member variable and returned here without repeating the calculation
+
+	osg::Vec3f t, s;
+	osg::Quat r, sr;
+
+	// get the path, from the position target to the root, and decompose the resultant matrix to get the world position of the collision target
+	osg::computeLocalToWorld(m_pCollisionTarget->getParentalNodePaths(0)[0]).decompose(t, r, s, sr);
+
+	return t;
 }

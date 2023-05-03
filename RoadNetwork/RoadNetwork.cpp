@@ -212,7 +212,7 @@ void createRoadNetwork() {
 
 		mL0 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
 			osg::Matrixf::rotate(osg::DegreesToRadians(0.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(-180.0f, 180.0f, 0.0f);
+			osg::Matrixf::translate(-170.0f, 180.0f, 0.0f);
 
 		mL1 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
 			osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0f) *
@@ -334,6 +334,10 @@ void createAnimatedCars() {
 		float fTime = 0.0f;
 		osg::Vec3f vLastPos;
 
+		pAC->setBound(osg::Vec3f(100.0f, 100.0f, 100.0f));
+		pAC->setTransform(osg::Matrix::translate(120.0f, 0.0f, 80.0));
+
+
 		fTime = addControlPoint("RoadCurve3", "3", pPath, fTime, fSpeed, vLastPos);
 		fTime = addControlPoint("RoadCurve3", "4", pPath, fTime, fSpeed, vLastPos);
 		fTime = addControlPoint("RoadCurve3", "5", pPath, fTime, fSpeed, vLastPos);
@@ -400,6 +404,9 @@ int main()
 
 	createAnimatedCars();
 
+	TrafficSystem::Collider::toggleVisible();
+
+
 	// Initialise window Traits 
 	osg::GraphicsContext::Traits* pTraits = new osg::GraphicsContext::Traits();
 	pTraits->x = 20;
@@ -435,7 +442,7 @@ int main()
 	//viewer.addEventHandler(new osgViewer::LODScaleHandler);
 	//viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
 	//viewer.addEventHandler(new ExampleInteractionHandler(keyFunction));
-
+	// 
 	// Set the Scene to render
 	viewer.setSceneData(g_pRoot);
 
