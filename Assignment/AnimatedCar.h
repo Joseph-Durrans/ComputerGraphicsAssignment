@@ -18,9 +18,13 @@ namespace Assignment {
 
 		virtual osg::Vec3f getFacadeCollisionPoint() override; // inhereted from collision target (cars can have collision targets too
 
+		void setCamera(osg::Camera* pCamera);
+		osg::Camera* camera();
 
 	protected:
 		osg::MatrixTransform* m_pAnimationTransform; // needed for the animation path. Needs to be inserted between the root and transform nodes
 		osg::MatrixTransform* m_pCollisionTarget; // defines the space transformation for the collision volume
+
+		osg::Camera* m_pCamera;
 	};
 }

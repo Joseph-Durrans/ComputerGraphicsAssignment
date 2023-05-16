@@ -23,10 +23,14 @@
     <ClInclude Include="AnimatedCarFactory.h" />
     <ClInclude Include="ControllableTrafficLightFacade.h" />
     <ClInclude Include="ControllableTrafficLightFacadeFactory.h" />
+    <ClInclude Include="EventHandler.h" />
     <ClInclude Include="Example.h" />
     <ClInclude Include="LightControl.h" />
+    <ClInclude Include="PedestrianTrafficLightFacade.h" />
+    <ClInclude Include="PedestrianTrafficLightFacadeFactory.h" />
     <ClInclude Include="RoadTileLightsFacade.h" />
     <ClInclude Include="RoadTileLightsFacadeFactory.h" />
+    <ClInclude Include="SelectionHandler.h" />
     <ClInclude Include="TrafficLightGroup.h" />
   </ItemGroup>
   <ItemGroup>
@@ -34,10 +38,14 @@
     <ClCompile Include="AnimatedCarFactory.cpp" />
     <ClCompile Include="ControllableTrafficLightFacade.cpp" />
     <ClCompile Include="ControllableTrafficLightFacadeFactory.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="Example.cpp" />
     <ClCompile Include="LightControl.cpp" />
+    <ClCompile Include="PedestrianTrafficLightFacade.cpp" />
+    <ClCompile Include="PedestrianTrafficLightFacadeFactory.cpp" />
     <ClCompile Include="RoadTileLightsFacade.cpp" />
     <ClCompile Include="RoadTileLightsFacadeFactory.cpp" />
+    <ClCompile Include="SelectionHandler.cpp" />
     <ClCompile Include="TrafficLightGroup.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

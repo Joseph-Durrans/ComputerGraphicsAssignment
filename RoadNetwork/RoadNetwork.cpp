@@ -38,17 +38,19 @@
 #include <Assignment/LightControl.h>
 #include <Assignment/TrafficLightGroup.h>
 
-
 #include <Common/NodeFinderT.h>
 
 #include <Assignment/AnimatedCar.h>
 #include <Assignment/AnimatedCarFactory.h>
 
+#include <Assignment/PedestrianTrafficLightFacade.h>
+#include <Assignment/PedestrianTrafficLightFacadeFactory.h>
+
+#include <Assignment/EventHandler.h>
 
 osg::Group* g_pRoot;
 
 const float TILE_SIZE = 472.0f;
-
 
 float addControlPoint(std::string sTile, std::string sPoint, osg::AnimationPath* pPath, float fTime, float fSpeed, osg::Vec3f& rvLastPos, bool bFirst = false)
 {
@@ -104,7 +106,7 @@ float addControlPoint(std::string sTile, std::string sPoint, osg::AnimationPath*
 }
 
 void createRoadNetwork() {
-	// Straight road Transformations
+	// Straight road transformations
 	osg::Matrixf mRS0, mRS1, mRS2, mRS3, mRS4, mRS5, mRS6;
 
 	mRS1 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, TILE_SIZE, 0.0f);
@@ -114,7 +116,7 @@ void createRoadNetwork() {
 	mRS5 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE * 2, 0.0f);
 	mRS6 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE, 0.0f);
 
-	// Curved road Transformations
+	// Curved road transformations
 	osg::Matrixf mRC0, mRC1, mRC2, mRC3, mRC4, mRC5, mRC6, mRC7, mRC8, mRC9, mRC10;
 
 	mRC0 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, 0.0f, 0.0f);
@@ -129,13 +131,13 @@ void createRoadNetwork() {
 	mRC9 = osg::Matrixf::translate(-TILE_SIZE, 0.0f, 0.0f);
 	mRC10 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE * 4, 0.0f);
 
-	// T junction Transformations
+	// T junction transformations
 	osg::Matrixf mRT0, mRT1;
 
 	mRT0 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, TILE_SIZE * 2, 0.0f);
 	mRT1 = osg::Matrixf::translate(0.0f, TILE_SIZE * 4, 0.0f);
 
-	// X junction Transformations
+	// X junction transformations
 	osg::Matrixf mRX0, mRX1;
 
 	mRX0 = osg::Matrixf::translate(TILE_SIZE * 2, TILE_SIZE * 3, 0.0f);
@@ -145,7 +147,7 @@ void createRoadNetwork() {
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight0", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS0, true)->root());
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight1", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS1, true)->root());
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight2", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS2, true)->root());
-	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight3", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS3, true)->root());
+	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTileLights", "RoadStraight3", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS3, true)->root());
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight4", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS4, true)->root());
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight5", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS5, true)->root());
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight6", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS6, true)->root());
@@ -177,29 +179,24 @@ void createRoadNetwork() {
 		osg::Matrix mL0, mL1, mL2, mL3;
 
 		mL0 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(0.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(-180.0f, 180.0f, 0.0f);
+			osg::Matrixf::rotate(osg::DegreesToRadians(-90.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(-180.0f, 170.0f, 0.0f);
 
 
 		mL2 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(180.0f, -180.0f, 0.0f);
+			osg::Matrixf::rotate(osg::DegreesToRadians(0.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(-170.0f, -180.0f, 0.0f);
 
 		mL3 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(-90.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(180.0f, 180.0f, 0.0f);
+			osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(170.0f, 180.0f, 0.0f);
 
 		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup();
 		Assignment::TrafficLightGroup* pTG1 = new Assignment::TrafficLightGroup();
 
-
-
 		pTG0->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
-		
 		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight1", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL2, true)));
-		
 		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadTJunction1TrafficLight2", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL3, true)));
-	
 	
 		pRL->addLightGroup(pTG0);
 		pRL->addLightGroup(pTG1);
@@ -211,21 +208,20 @@ void createRoadNetwork() {
 		osg::Matrix mL0, mL1, mL2, mL3;
 
 		mL0 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(0.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(-170.0f, 180.0f, 0.0f);
+			osg::Matrixf::rotate(osg::DegreesToRadians(-90.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(-180.0f, 170.0f, 0.0f);
 
 		mL1 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(-180.0f, -180.0f, 0.0f);
+			osg::Matrixf::rotate(osg::DegreesToRadians(0.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(-170.0f, -180.0f, 0.0f);
 
 		mL2 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(180.0f, -180.0f, 0.0f);
+			osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(180.0f, -170.0f, 0.0f);
 
 		mL3 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
-			osg::Matrixf::rotate(osg::DegreesToRadians(-90.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(180.0f, 180.0f, 0.0f);
-
+			osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(170.0f, 180.0f, 0.0f);
 
 		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup();
 		Assignment::TrafficLightGroup* pTG1 = new Assignment::TrafficLightGroup();
@@ -235,9 +231,24 @@ void createRoadNetwork() {
 		pTG0->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight2", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL2, true)));
 		pTG1->addLight(dynamic_cast<Assignment::ControllableTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("ControlledTrafficLight", "RoadXJunction1TrafficLight3", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL3, true)));
 
-
 		pRL->addLightGroup(pTG0);
 		pRL->addLightGroup(pTG1);
+	}
+
+	// Find striaght road and add pedestrian light
+	if (Assignment::RoadTileLightsFacade* pRL = dynamic_cast<Assignment::RoadTileLightsFacade*>(Common::Facade::findFacade("RoadStraight3")))
+	{
+		osg::Matrix mL0;
+
+		mL0 = osg::Matrixf::scale(0.3f, 0.3f, 0.3f) *
+			osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0f) *
+			osg::Matrixf::translate(0.0f, -170.0f, 0.0f);
+
+		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup();
+
+		pTG0->addLight(dynamic_cast<Assignment::PedestrianTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("PedestrianTrafficLightFacade", "RoadStraightPedestrianTrafficLightFacade0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
+
+		pRL->addLightGroup(pTG0);
 	}
 }
 
@@ -263,21 +274,23 @@ void createAnimatedCars() {
 		}
 	}
 
+	// Car transformations
 	osg::Matrixf mAC1, mAC2;
 
 	mAC1 = osg::Matrixf::scale(40.0f, 40.0f, 40.0f) *
 		osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3f(0.0f, 0.0f, 1.0f)) *
-		osg::Matrixf::translate(0.0f, 0.0, 25.0f);
+		osg::Matrixf::translate(0.0f, 0.0f, 25.0f);
 
 	mAC2 = osg::Matrixf::scale(1.0f, 1.0f, 1.0f) *
+		osg::Matrixf::translate(0.0f, 0.0, 25.0f) *
 		osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f)) *
-		osg::Matrix::rotate(osg::DegreesToRadians(180.0f), osg::Vec3f(0.0f, 0.0f, 1.0f)) *
+		osg::Matrix::rotate(osg::DegreesToRadians(180.0f), osg::Vec3f(0.0f, 0.0f, 1.0f));
 
-		osg::Matrixf::translate(0.0f, 0.0, 25.0f);
-
+	// Create cars
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("AnimatedCar", "AnimatedCar0", Common::AssetLibrary::instance()->getAsset("Car-Delta"), mAC1, true)->root());
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("AnimatedCar", "AnimatedCar1", Common::AssetLibrary::instance()->getAsset("Car-Stratos"), mAC2, true)->root());
 
+	// Find car and add animation path
 	if (Assignment::AnimatedCar* pAC = dynamic_cast<Assignment::AnimatedCar*>(Common::Facade::findFacade("AnimatedCar0"))) {
 		osg::AnimationPath* pPath = new osg::AnimationPath();
 		float fSpeed = 250.0f;
@@ -328,14 +341,15 @@ void createAnimatedCars() {
 		pAC->setAnimationPath(pPath);
 	}
 
+	// Find car and add animation path and modify collision box
 	if (Assignment::AnimatedCar* pAC = dynamic_cast<Assignment::AnimatedCar*>(Common::Facade::findFacade("AnimatedCar1"))) {
 		osg::AnimationPath* pPath = new osg::AnimationPath();
 		float fSpeed = 800.0f;
 		float fTime = 0.0f;
 		osg::Vec3f vLastPos;
 
-		pAC->setBound(osg::Vec3f(100.0f, 100.0f, 100.0f));
-		pAC->setTransform(osg::Matrix::translate(120.0f, 0.0f, 80.0));
+		pAC->setBound(osg::Vec3f(1.5f * 40.0f, 0.8f * 40.0f, 2.5f * 40.0f));
+		pAC->setTransform(osg::Matrix::translate(-2.5f * 40.0f, -0.0f * 40.0f, 1.0f * 40.0f));
 
 
 		fTime = addControlPoint("RoadCurve3", "3", pPath, fTime, fSpeed, vLastPos);
@@ -384,8 +398,8 @@ int main()
 	Common::FacadeManufactory::instance()->addFactory("RoadTileLights", new Assignment::RoadTileLightsFacadeFactory());
 	Common::FacadeManufactory::instance()->addFactory("TrafficLight", new TrafficSystem::TrafficLightFacadeFactory());
 	Common::FacadeManufactory::instance()->addFactory("ControlledTrafficLight", new Assignment::ControllableTrafficLightFacadeFactory());
+	Common::FacadeManufactory::instance()->addFactory("PedestrianTrafficLightFacade", new Assignment::PedestrianTrafficLightFacadeFactory());
 	Common::FacadeManufactory::instance()->addFactory("AnimatedCar", new Assignment::AnimatedCarFactory());
-
 
 	// Initialise AssetLibrary if it doesnt already exist
 	Common::AssetLibrary::start();
@@ -400,12 +414,13 @@ int main()
 	Common::AssetLibrary::instance()->loadAsset("Car-Delta", "../../Data/Lancia-Delta.obj");
 	Common::AssetLibrary::instance()->loadAsset("Car-Stratos", "../../Data/Lancia-Stratos/source/lshfg4.fbx");
 
+	// Create road network
 	createRoadNetwork();
 
+	// Create animated cars
 	createAnimatedCars();
 
 	TrafficSystem::Collider::toggleVisible();
-
 
 	// Initialise window Traits 
 	osg::GraphicsContext::Traits* pTraits = new osg::GraphicsContext::Traits();
@@ -434,15 +449,16 @@ int main()
 	viewer.setCamera(pCamera);
 
 	// add event handlers
-	//viewer.addEventHandler(new osgViewer::ThreadingHandler);
-	//viewer.addEventHandler(new osgGA::StateSetManipulator(viewer.getCamera()->getOrCreateStateSet()));
-	//viewer.addEventHandler(new osgViewer::WindowSizeHandler);
-	//viewer.addEventHandler(new osgViewer::StatsHandler);
-	//viewer.addEventHandler(new osgViewer::RecordCameraPathHandler);
-	//viewer.addEventHandler(new osgViewer::LODScaleHandler);
-	//viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
-	//viewer.addEventHandler(new ExampleInteractionHandler(keyFunction));
-	// 
+	viewer.addEventHandler(new osgViewer::ThreadingHandler);
+	viewer.addEventHandler(new osgGA::StateSetManipulator(viewer.getCamera()->getOrCreateStateSet()));
+	viewer.addEventHandler(new osgViewer::WindowSizeHandler);
+	viewer.addEventHandler(new osgViewer::StatsHandler);
+	viewer.addEventHandler(new osgViewer::RecordCameraPathHandler);
+	viewer.addEventHandler(new osgViewer::LODScaleHandler);
+	viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
+	viewer.addEventHandler(new Assignment::EventHandler());
+
+
 	// Set the Scene to render
 	viewer.setSceneData(g_pRoot);
 

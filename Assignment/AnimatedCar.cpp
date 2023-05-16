@@ -3,12 +3,13 @@
 
 #include "AnimatedCar.h"
 #include "ControllableTrafficLightFacade.h"
+#include "SelectionHandler.h"
 
 #include <iostream>
 
 #include <TrafficSystem/TrafficLightFacade.h> 
 
-Assignment::AnimatedCar::AnimatedCar(std::string sName, osg::Node* pAsset, osg::Matrix m, bool bVisible) : TrafficSystem::CarFacade(sName, pAsset, m, bVisible), m_pAnimationTransform(new osg::MatrixTransform()), m_pCollisionTarget(new osg::MatrixTransform())
+Assignment::AnimatedCar::AnimatedCar(std::string sName, osg::Node* pAsset, osg::Matrix m, bool bVisible) : TrafficSystem::CarFacade(sName, pAsset, m, bVisible), m_pAnimationTransform(new osg::MatrixTransform()), m_pCollisionTarget(new osg::MatrixTransform()), m_pCamera(0)
 {
 	// insert the animation transform inot the facade sub tree to allow it to control an empty space transform
 	// Take note of the order of these operations. This avoids the existing objects being unref() and deleted
@@ -26,9 +27,13 @@ Assignment::AnimatedCar::AnimatedCar(std::string sName, osg::Node* pAsset, osg::
 	setBound(osg::Vec3f(4.0f, 2.0f, 0.8f));
 
 
+	SelectionHandler* pSH = new SelectionHandler(this);
+	m_pRoot->setUserData(pSH);
+
+
 	// add a collision detector to the back of the car - we will not be using this, but can be used to stop cars running into each other
 	m_pCollisionTarget->addChild(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0f, 0.0f, 0.0f), 20.0f)));
-	m_pCollisionTarget->setMatrix(osg::Matrix::translate(-110.0f, 0.0f, 0.0f));
+	m_pCollisionTarget->setMatrix(osg::Matrix::translate(-50.0f, 0.0f, 0.0f));
 	m_pAnimationTransform->addChild(m_pCollisionTarget);
 }
 
@@ -101,14 +106,18 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 				// for the collide volume
 				vTargetPosition = vTargetPosition * mW2L;
 
-				if (m_pGeode->getBoundingBox().contains(vTargetPosition)) {
-					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback()))
+				if (m_pGeode->getBoundingBox().contains(vTargetPosition)) 
+				{
+					std::cout << "collided";
+					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback())) 
 					{
 						pAPC->setPause(true);
 					}
 				}
-				else {
-					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback())) {
+				else 
+				{
+					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback())) 
+					{
 						if (pAPC->getPause()) pAPC->setPause(false);
 					}
 
@@ -136,4 +145,14 @@ osg::Vec3f Assignment::AnimatedCar::getFacadeCollisionPoint()
 	osg::computeLocalToWorld(m_pCollisionTarget->getParentalNodePaths(0)[0]).decompose(t, r, s, sr);
 
 	return t;
+}
+
+void Assignment::AnimatedCar::setCamera(osg::Camera* pCamera)
+{
+	m_pCamera = pCamera;
+}
+
+osg::Camera* Assignment::AnimatedCar::camera()
+{
+	return m_pCamera;
 }
