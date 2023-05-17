@@ -24,8 +24,9 @@ void Assignment::TrafficLightGroup::setState(LightControl::LightState eState)
 		(*it)->setState(eState);
 }
 
-Assignment::TrafficLightGroup::TrafficLightGroup(): m_pRoot(new osg::Group())
+Assignment::TrafficLightGroup::TrafficLightGroup(bool bAnimate) : m_pRoot(new osg::Group()), m_bAnimate(true)
 {
+	m_bAnimate = bAnimate;
 }
 
 Assignment::TrafficLightGroup::~TrafficLightGroup()

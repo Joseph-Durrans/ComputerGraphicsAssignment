@@ -5,6 +5,7 @@
 
 Assignment::RoadTileLightsFacade::RoadTileLightsFacade(std::string sName, osg::Node* pAsset, osg::Matrixf m, bool bVisible): TrafficSystem::RoadFacade(sName, pAsset, m, bVisible), m_uiCount(0), m_itCurrentLight(m_lLights.end())
 {
+	
 	m_pTransformation->setUpdateCallback(this);
 }
 
@@ -35,7 +36,7 @@ bool Assignment::RoadTileLightsFacade::run(osg::Object* object, osg::Object* dat
 		{
 			m_uiCount = 0;
 
-			if (m_itCurrentLight != m_lLights.end()) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::STOP);
+			if (m_itCurrentLight != m_lLights.end() && (*m_itCurrentLight)->m_bAnimate) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::STOP);
 
 			if (m_lLights.size() > 1)
 			{
@@ -43,10 +44,10 @@ bool Assignment::RoadTileLightsFacade::run(osg::Object* object, osg::Object* dat
 				if (m_itCurrentLight == m_lLights.end()) m_itCurrentLight = m_lLights.begin();
 			}
 
-			if (m_itCurrentLight != m_lLights.end()) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::READY);
+			if (m_itCurrentLight != m_lLights.end() && (*m_itCurrentLight)->m_bAnimate) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::READY);
 		}
-		else if (m_uiCount == 30) if (m_itCurrentLight != m_lLights.end()) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::GO);
-		else if (m_uiCount == 70) if (m_itCurrentLight != m_lLights.end()) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::SLOW);
+		else if (m_uiCount == 30) if (m_itCurrentLight != m_lLights.end() && (*m_itCurrentLight)->m_bAnimate) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::GO);
+		else if (m_uiCount == 70) if (m_itCurrentLight != m_lLights.end() && (*m_itCurrentLight)->m_bAnimate) (*m_itCurrentLight)->setState(ControllableTrafficLightFacade::SLOW);
 
 		m_uiCount++;
 	}

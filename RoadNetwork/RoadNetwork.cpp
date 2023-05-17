@@ -240,11 +240,11 @@ void createRoadNetwork() {
 	{
 		osg::Matrix mL0;
 
-		mL0 = osg::Matrixf::scale(0.3f, 0.3f, 0.3f) *
+		mL0 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
 			osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0f) *
 			osg::Matrixf::translate(0.0f, -170.0f, 0.0f);
 
-		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup();
+		Assignment::TrafficLightGroup* pTG0 = new Assignment::TrafficLightGroup(false);
 
 		pTG0->addLight(dynamic_cast<Assignment::PedestrianTrafficLightFacade*>(Common::FacadeManufactory::instance()->create("PedestrianTrafficLightFacade", "RoadStraightPedestrianTrafficLightFacade0", Common::AssetLibrary::instance()->cloneAsset("TrafficLight"), mL0, true)));
 

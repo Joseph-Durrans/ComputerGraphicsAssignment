@@ -14,12 +14,13 @@ namespace Assignment {
 	class TrafficLightGroup
 	{
 	public:	
-		TrafficLightGroup();
+		TrafficLightGroup(bool bAnimate = true);
 		virtual ~TrafficLightGroup();
 
 		void addLight(LightControl* pCTF);
 
 		osg::Group* root();
+		bool m_bAnimate;
 
 		void setState(LightControl::LightState eState);
 
