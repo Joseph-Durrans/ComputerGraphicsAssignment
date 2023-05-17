@@ -48,6 +48,9 @@
 
 #include <Assignment/EventHandler.h>
 
+#include <Assignment/BuildingFacade.h>
+#include <Assignment/BuildingFacadeFactory.h>
+
 osg::Group* g_pRoot;
 
 const float TILE_SIZE = 472.0f;
@@ -381,6 +384,18 @@ void createAnimatedCars() {
 	}
 }
 
+void createBuildings() {
+	// Building transformations
+	osg::Matrixf mB0;
+
+	mB0 = osg::Matrixf::scale(0.1f, 0.1f, 0.1f)*
+		osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f))*
+		osg::Matrixf::translate(-TILE_SIZE * 2, TILE_SIZE, 25.0f);
+
+	// Create building
+	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("Building", "Building0", Common::AssetLibrary::instance()->cloneAsset("Asia-Building"), mB0, true)->root());
+}
+
 int main()
 {
 	// Declare Viewer
@@ -400,8 +415,9 @@ int main()
 	Common::FacadeManufactory::instance()->addFactory("ControlledTrafficLight", new Assignment::ControllableTrafficLightFacadeFactory());
 	Common::FacadeManufactory::instance()->addFactory("PedestrianTrafficLightFacade", new Assignment::PedestrianTrafficLightFacadeFactory());
 	Common::FacadeManufactory::instance()->addFactory("AnimatedCar", new Assignment::AnimatedCarFactory());
+	Common::FacadeManufactory::instance()->addFactory("Building", new Assignment::BuildingFacadeFactory());
 
-	// Initialise AssetLibrary if it doesnt already exist
+	// Initialise AssetLibrary if it doesnt already exist	
 	Common::AssetLibrary::start();
 
 	// Get AssetLibrary instance and load new asset if it doesnt already exist
@@ -413,12 +429,16 @@ int main()
 	Common::AssetLibrary::instance()->loadAsset("Car-Dumptruck", "../../OpenSceneGraph-Data/dumptruck.osgt");
 	Common::AssetLibrary::instance()->loadAsset("Car-Delta", "../../Data/Lancia-Delta.obj");
 	Common::AssetLibrary::instance()->loadAsset("Car-Stratos", "../../Data/Lancia-Stratos/source/lshfg4.fbx");
+	Common::AssetLibrary::instance()->loadAsset("Asia-Building", "../../Data/building-set/source/building.fbx");
 
 	// Create road network
 	createRoadNetwork();
 
 	// Create animated cars
 	createAnimatedCars();
+
+	// Create buildinfs
+	createBuildings();
 
 	TrafficSystem::Collider::toggleVisible();
 

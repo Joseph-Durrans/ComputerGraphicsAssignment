@@ -106,24 +106,18 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 				// for the collide volume
 				vTargetPosition = vTargetPosition * mW2L;
 
-				if (m_pGeode->getBoundingBox().contains(vTargetPosition)) 
+				if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback()))
 				{
-					std::cout << "collided";
-					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback())) 
+
+					if (m_pGeode->getBoundingBox().contains(vTargetPosition))
 					{
 						pAPC->setPause(true);
 					}
-				}
-				else 
-				{
-					if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback())) 
+					else
 					{
 						if (pAPC->getPause()) pAPC->setPause(false);
 					}
-
 				}
-
-		
 			}
 		}
 	}

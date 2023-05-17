@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="AnimatedCar.h" />
     <ClInclude Include="AnimatedCarFactory.h" />
+    <ClInclude Include="BuildingFacade.h" />
+    <ClInclude Include="BuildingFacadeFactory.h" />
     <ClInclude Include="ControllableTrafficLightFacade.h" />
     <ClInclude Include="ControllableTrafficLightFacadeFactory.h" />
     <ClInclude Include="EventHandler.h" />
@@ -36,6 +38,8 @@
   <ItemGroup>
     <ClCompile Include="AnimatedCar.cpp" />
     <ClCompile Include="AnimatedCarFactory.cpp" />
+    <ClCompile Include="BuildingFacade.cpp" />
+    <ClCompile Include="BuildingFacadeFactory.cpp" />
     <ClCompile Include="ControllableTrafficLightFacade.cpp" />
     <ClCompile Include="ControllableTrafficLightFacadeFactory.cpp" />
     <ClCompile Include="EventHandler.cpp" />
