@@ -195,9 +195,6 @@ osg::Node* Assignment::PedestrianTrafficLightFacade::rootNode()
 
 osg::Vec3f Assignment::PedestrianTrafficLightFacade::getFacadeCollisionPoint()
 {
-    // currently this is calculating the world position target omn every frame. Ideally, because this is a static object,
-    // this position could be calculated in the constructor, stored as a member variable and returned here without repeating the calculation
-
     osg::Vec3f t, s;
     osg::Quat r, sr;
 

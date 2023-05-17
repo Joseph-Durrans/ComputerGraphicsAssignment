@@ -21,18 +21,15 @@ Assignment::AnimatedCar::AnimatedCar(std::string sName, osg::Node* pAsset, osg::
 
 	// set up the position and size of the detector box
 	// remeber this is in the coordinate frame of the car
-
-		//toggleVisible(); // uncomment to hide the detector box
+	toggleVisible();
 	setTransform(osg::Matrixf::translate(1.0f, -2.5f, -0.7f));
 	setBound(osg::Vec3f(4.0f, 2.0f, 0.8f));
-
 
 	SelectionHandler* pSH = new SelectionHandler(this);
 	m_pRoot->setUserData(pSH);
 
-
 	// add a collision detector to the back of the car - we will not be using this, but can be used to stop cars running into each other
-	m_pCollisionTarget->addChild(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0f, 0.0f, 0.0f), 20.0f)));
+	m_pCollisionTarget->addChild(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0f, 0.0f, 0.0f), 50.0f)));
 	m_pCollisionTarget->setMatrix(osg::Matrix::translate(-50.0f, 0.0f, 0.0f));
 	m_pAnimationTransform->addChild(m_pCollisionTarget);
 }
@@ -45,8 +42,6 @@ void Assignment::AnimatedCar::setAnimationPath(osg::AnimationPath* pPath)
 {
 	// add the animation path to the facade - connect it as a callback to the new animation transform
 	osg::AnimationPathCallback* pAPC = new osg::AnimationPathCallback(pPath);
-	//	pAPC->setPause(false);
-	//	pAPC->setAnimationPath(pPath);
 	m_pAnimationTransform->setUpdateCallback(pAPC);
 }
 
@@ -108,7 +103,6 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 
 				if (osg::AnimationPathCallback* pAPC = dynamic_cast<osg::AnimationPathCallback*>(m_pAnimationTransform->getUpdateCallback()))
 				{
-
 					if (m_pGeode->getBoundingBox().contains(vTargetPosition))
 					{
 						pAPC->setPause(true);
@@ -127,11 +121,6 @@ bool Assignment::AnimatedCar::run(osg::Object* object, osg::Object* data)
 
 osg::Vec3f Assignment::AnimatedCar::getFacadeCollisionPoint()
 {
-	// old return osg::Vec3f();
-
-		// currently this is calculating the world position target omn every frame. Ideally, because this is a static object,
-// this position could be calculated in the constructor, stored as a member variable and returned here without repeating the calculation
-
 	osg::Vec3f t, s;
 	osg::Quat r, sr;
 

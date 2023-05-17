@@ -30,7 +30,8 @@ namespace Assignment
 		osg::Geode* m_pRed;
 		osg::Geode* m_pGreen;
 
-		osg::Vec3f sm_pLocalPosition;
+		osg::Vec3f m_WorldCollisionTarget;
+
 
 		// Inherited via LightControl
 		virtual osg::Node* rootNode() override;

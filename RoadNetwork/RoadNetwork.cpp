@@ -24,7 +24,7 @@
 #include <TrafficSystem/AnimationPointFinder.h>
 #include <TrafficSystem/Collider.h>
 
-// #include "ExampleInteractionHandler.h"
+#include "InteractionHandler.h"
 
 #include <Assignment/ControllableTrafficLightFacade.h>
 #include <Assignment/ControllableTrafficLightFacadeFactory.h>
@@ -52,8 +52,67 @@
 #include <Assignment/BuildingFacadeFactory.h>
 
 osg::Group* g_pRoot;
-
 const float TILE_SIZE = 472.0f;
+
+bool g_bNames = false;
+bool g_bAnimationPoints = false;
+bool g_bAnimationNames = false;
+
+void keyFunction(char c)
+{
+	switch (c)
+	{
+	case 'h':
+		std::cout << "Assignment Viewer - key options" << std::endl;
+		std::cout << "\td - toggle visibility of the collider detection boxes" << std::endl;
+		std::cout << "\tn - toggle name display for road tiles" << std::endl;
+		std::cout << "\ta - toggle animation point display for road tiles" << std::endl;
+		std::cout << "\tz - toggle animation point name display for road tiles" << std::endl;
+		break;
+	case 'd':
+		TrafficSystem::Collider::toggleVisible();
+		break;
+	case 'n':
+		g_bNames = !g_bNames;
+		for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+			if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+				pRF->enableNames(g_bNames);
+		break;
+	case 'a':
+		g_bAnimationPoints = !g_bAnimationPoints;
+		for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+			if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+				pRF->enableAnimationPoints(g_bAnimationPoints);
+		break;
+	case 'z':
+		g_bAnimationNames = !g_bAnimationNames;
+		for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+			if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+				pRF->enableAnimationIDs(g_bAnimationNames);
+		break;
+	}
+}
+
+// Show tile names and animation point names
+/*for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+{
+	if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+	{
+		pRF->enableAnimationIDs(true);
+		pRF->enableNames(true);
+		pRF->enableAnimationPoints(true);
+
+		// this bit adds the tile name to the billboards over the road tile
+		osg::Billboard* pBB = new osg::Billboard();
+		pBB->setNormal(osg::Vec3f(0.0f, 0.0f, 1.0f));
+		osgText::Text* pT = new osgText::Text();
+		pT->setText(it->first);
+
+		pBB->addDrawable(pT);
+		pBB->setPosition(0, osg::Vec3f(0.0f, 0.0f, 60.0f));
+		pRF->scale()->addChild(pBB);
+	}
+} */
 
 float addControlPoint(std::string sTile, std::string sPoint, osg::AnimationPath* pPath, float fTime, float fSpeed, osg::Vec3f& rvLastPos, bool bFirst = false)
 {
@@ -188,7 +247,7 @@ void createRoadNetwork() {
 
 		mL2 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
 			osg::Matrixf::rotate(osg::DegreesToRadians(0.0f), 0.0f, 0.0f, 1.0f) *
-			osg::Matrixf::translate(-170.0f, -180.0f, 0.0f);
+			osg::Matrixf::translate(-170.0f, -200.0f, 0.0f);
 
 		mL3 = osg::Matrixf::scale(0.03f, 0.03f, 0.03f) *
 			osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0f) *
@@ -256,27 +315,6 @@ void createRoadNetwork() {
 }
 
 void createAnimatedCars() {
-	// Show tile names and animation point names
-	for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
-	{
-		if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
-		{
-			pRF->enableAnimationIDs(true);
-			pRF->enableNames(true);
-			pRF->enableAnimationPoints(true);
-
-			// this bit adds the tile name to the billboards over the road tile
-			osg::Billboard* pBB = new osg::Billboard();
-			pBB->setNormal(osg::Vec3f(0.0f, 0.0f, 1.0f));
-			osgText::Text* pT = new osgText::Text();
-			pT->setText(it->first);
-
-			pBB->addDrawable(pT);
-			pBB->setPosition(0, osg::Vec3f(0.0f, 0.0f, 60.0f));
-			pRF->scale()->addChild(pBB);
-		}
-	}
-
 	// Car transformations
 	osg::Matrixf mAC1, mAC2;
 
@@ -440,8 +478,6 @@ int main()
 	// Create buildinfs
 	createBuildings();
 
-	TrafficSystem::Collider::toggleVisible();
-
 	// Initialise window Traits 
 	osg::GraphicsContext::Traits* pTraits = new osg::GraphicsContext::Traits();
 	pTraits->x = 20;
@@ -477,6 +513,7 @@ int main()
 	viewer.addEventHandler(new osgViewer::LODScaleHandler);
 	viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
 	viewer.addEventHandler(new Assignment::EventHandler());
+	viewer.addEventHandler(new InteractionHandler(keyFunction));
 
 
 	// Set the Scene to render

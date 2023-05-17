@@ -135,7 +135,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="InteractionHandler.cpp" />
     <ClCompile Include="RoadNetwork.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InteractionHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
