@@ -391,7 +391,29 @@ void createAnimatedCars() {
 		fTime = addControlPoint("RoadCurve5", "5", pPath, fTime, fSpeed, vLastPos);
 
 		pAC->setAnimationPath(pPath);
+
+		// Car Shader
+		osg::Shader* pVertShader = new osg::Shader(osg::Shader::VERTEX);
+		pVertShader->loadShaderSourceFromFile("../../shaders/colour2.vert");
+
+		osg::Shader* pFragShader = new osg::Shader(osg::Shader::FRAGMENT);
+		pFragShader->loadShaderSourceFromFile("../../shaders/colour2.frag");
+
+		osg::Program* pShaderProgram = new osg::Program();
+		pShaderProgram->addShader(pVertShader);
+		pShaderProgram->addShader(pFragShader);
+
+		pAC->asset()->getOrCreateStateSet()->setAttributeAndModes(pShaderProgram, osg::StateAttribute::ON);
+
+		// control shader
+		osg::Uniform* pStateUniform = new osg::Uniform(osg::Uniform::INT, "state");
+		// 0 = Red 1 = Green 2 = Blue
+		pStateUniform->set(1);
+		pAC->asset()->getOrCreateStateSet()->addUniform(pStateUniform);
 	}
+
+
+
 }
 
 void createBuildings() {
@@ -455,6 +477,11 @@ int main()
 	Shader::ShaderUnit::setShaderPath("../../shaders/");
 	Shader::ShaderUnit::addShader("perPixel");
 	Shader::ShaderUnit::addShader("default");
+
+	// Doesnt seem to work even after chaning shader path in shader unit
+	Shader::ShaderUnit::addShader("ambient");
+	Shader::ShaderUnit::addShader("diffuse");
+
 
 	// Initialise window Traits 
 	osg::GraphicsContext::Traits* pTraits = new osg::GraphicsContext::Traits();

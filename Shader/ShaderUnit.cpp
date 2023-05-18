@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-std::string Shader::ShaderUnit::sm_sShaderPath = "./";
+std::string Shader::ShaderUnit::sm_sShaderPath = "../../shaders";
 Shader::ShaderUnits Shader::ShaderUnit::sm_mShaderUnits;
 osg::Uniform* Shader::ShaderUnit::sm_pModelViewProjectionMatrixUniform=0;
 osg::Uniform* Shader::ShaderUnit::sm_pCameraEyeUniform=0;
@@ -29,7 +29,6 @@ Shader::ShaderUnit::~ShaderUnit()
 	if (m_pProgram) m_pProgram->unref();
 	if (m_pStateControlUniform) m_pStateControlUniform->unref();
 	if (m_pStateControlUniform2) m_pStateControlUniform2->unref();
-
 }
 
 std::string Shader::ShaderUnit::typeToExtension(osg::Shader::Type eType)
