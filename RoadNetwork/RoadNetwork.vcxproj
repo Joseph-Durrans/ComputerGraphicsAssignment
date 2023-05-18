@@ -111,7 +111,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);osgd.lib;osgViewerd.lib;osgGAd.lib;osgTextd.lib;osgDBd.lib;osgUtild.lib;Common.lib;TrafficSystem.lib;Assignment.lib;OpenGL32.lib;GLU32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);osgd.lib;osgViewerd.lib;osgGAd.lib;osgTextd.lib;osgDBd.lib;osgUtild.lib;Common.lib;TrafficSystem.lib;Assignment.lib;OpenGL32.lib;GLU32.lib;Shader.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\OpenSceneGraph-3.6.5-VC2022-64-Debug\lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

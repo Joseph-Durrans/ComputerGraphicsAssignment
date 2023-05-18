@@ -97,13 +97,13 @@ Assignment::ControllableTrafficLightFacade::ControllableTrafficLightFacade(std::
 
 
 	// not working? 
-	//osg::Vec3f t, s;
-	//osg::Quat r, sr;
+	// osg::Vec3f t, s;
+	// osg::Quat r, sr;
 
 	// get the path, from the position target to the root, and decompose the resultant matrix to get the world position of the collision target
-	//osg::computeLocalToWorld(m_pCollisionTarget->getParentalNodePaths(0)[0]).decompose(t, r, s, sr);
+	// osg::computeLocalToWorld(m_pCollisionTarget->getParentalNodePaths(0)[0]).decompose(t, r, s, sr);
 
-	//m_WorldCollisionTarget = t;
+	// m_WorldCollisionTarget = t;
 }
 
 Assignment::ControllableTrafficLightFacade::~ControllableTrafficLightFacade()
@@ -165,7 +165,7 @@ osg::Node* Assignment::ControllableTrafficLightFacade::rootNode()
 osg::Vec3f Assignment::ControllableTrafficLightFacade::getFacadeCollisionPoint()
 {
 	// not working? 
-	//return m_WorldCollisionTarget;
+	// return m_WorldCollisionTarget;
 
 	osg::Vec3f t, s;
 	osg::Quat r, sr;

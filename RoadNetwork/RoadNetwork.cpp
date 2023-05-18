@@ -7,10 +7,13 @@
 #include <osgDB/ReadFile>
 #include <osgGA/DriveManipulator>
 
+#include "InteractionHandler.h"
+
 #include <Common/Facade.h>
 #include <Common/Printer.h>
 #include <Common/AssetLibrary.h>
 #include <Common/FacadeManufactory.h>
+#include <Common/NodeFinderT.h>
 
 #include <TrafficSystem/RoadFacadeFactory.h>
 #include <TrafficSystem/RoadFacade.h>
@@ -18,41 +21,29 @@
 #include <TrafficSystem/TrafficLightFacade.h>
 #include <TrafficSystem/CarFacadeFactory.h>
 #include <TrafficSystem/CarFacade.h>
-
-#include <Assignment/Example.h>
-
 #include <TrafficSystem/AnimationPointFinder.h>
 #include <TrafficSystem/Collider.h>
 
-#include "InteractionHandler.h"
-
 #include <Assignment/ControllableTrafficLightFacade.h>
 #include <Assignment/ControllableTrafficLightFacadeFactory.h>
-
 #include <Assignment/RoadTileLightsFacade.h>
 #include <Assignment/RoadTileLightsFacadeFactory.h>
-
-#include <Assignment/Geometry.h>
-#include <Assignment/CubeGeometry.h>
-
 #include <Assignment/LightControl.h>
 #include <Assignment/TrafficLightGroup.h>
-
-#include <Common/NodeFinderT.h>
-
 #include <Assignment/AnimatedCar.h>
 #include <Assignment/AnimatedCarFactory.h>
-
 #include <Assignment/PedestrianTrafficLightFacade.h>
 #include <Assignment/PedestrianTrafficLightFacadeFactory.h>
-
-#include <Assignment/EventHandler.h>
-
 #include <Assignment/BuildingFacade.h>
 #include <Assignment/BuildingFacadeFactory.h>
+#include <Assignment/EventHandler.h>
+
+#include <Shader/ShaderUnit.h>
+#include <Shader/ShaderAttacher.h>
+#include <Shader/ShaderSwitcher.h>
 
 osg::Group* g_pRoot;
-const float TILE_SIZE = 472.0f;
+const float g_fTileSize = 472.0f;
 
 bool g_bNames = false;
 bool g_bAnimationPoints = false;
@@ -60,63 +51,44 @@ bool g_bAnimationNames = false;
 
 void keyFunction(char c)
 {
+	// Input key
 	switch (c)
 	{
-	case 'h':
-		std::cout << "Assignment Viewer - key options" << std::endl;
-		std::cout << "\td - toggle visibility of the collider detection boxes" << std::endl;
-		std::cout << "\tn - toggle name display for road tiles" << std::endl;
-		std::cout << "\ta - toggle animation point display for road tiles" << std::endl;
-		std::cout << "\tz - toggle animation point name display for road tiles" << std::endl;
-		break;
-	case 'd':
-		TrafficSystem::Collider::toggleVisible();
-		break;
-	case 'n':
-		g_bNames = !g_bNames;
-		for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
-			if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
-				pRF->enableNames(g_bNames);
-		break;
-	case 'a':
-		g_bAnimationPoints = !g_bAnimationPoints;
-		for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
-			if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
-				pRF->enableAnimationPoints(g_bAnimationPoints);
-		break;
-	case 'z':
-		g_bAnimationNames = !g_bAnimationNames;
-		for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
-			if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
-				pRF->enableAnimationIDs(g_bAnimationNames);
-		break;
+		case 'h':
+			std::cout << std::endl;
+			std::cout << "Assignment Viewer - key options" << std::endl;
+			std::cout << "\td - toggle visibility of the collider detection boxes" << std::endl;
+			std::cout << "\tn - toggle name display for road tiles" << std::endl;
+			std::cout << "\ta - toggle animation point display for road tiles" << std::endl;
+			std::cout << "\tz - toggle animation point name display for road tiles" << std::endl;
+			break;
+		case 'd':
+			TrafficSystem::Collider::toggleVisible();
+			break;
+		case 'n':
+			g_bNames = !g_bNames;
+			for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+				if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+					pRF->enableNames(g_bNames);
+			break;
+		case 'a':
+			g_bAnimationPoints = !g_bAnimationPoints;
+			for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+				if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+					pRF->enableAnimationPoints(g_bAnimationPoints);
+			break;
+		case 'z':
+			g_bAnimationNames = !g_bAnimationNames;
+			for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
+				if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
+					pRF->enableAnimationIDs(g_bAnimationNames);
+			break;
 	}
 }
 
-// Show tile names and animation point names
-/*for (Common::FacadeMap::iterator it = Common::Facade::facades().begin(); it != Common::Facade::facades().end(); it++)
-{
-	if (TrafficSystem::RoadFacade* pRF = dynamic_cast<TrafficSystem::RoadFacade*>(it->second))
-	{
-		pRF->enableAnimationIDs(true);
-		pRF->enableNames(true);
-		pRF->enableAnimationPoints(true);
-
-		// this bit adds the tile name to the billboards over the road tile
-		osg::Billboard* pBB = new osg::Billboard();
-		pBB->setNormal(osg::Vec3f(0.0f, 0.0f, 1.0f));
-		osgText::Text* pT = new osgText::Text();
-		pT->setText(it->first);
-
-		pBB->addDrawable(pT);
-		pBB->setPosition(0, osg::Vec3f(0.0f, 0.0f, 60.0f));
-		pRF->scale()->addChild(pBB);
-	}
-} */
-
 float addControlPoint(std::string sTile, std::string sPoint, osg::AnimationPath* pPath, float fTime, float fSpeed, osg::Vec3f& rvLastPos, bool bFirst = false)
 {
-	//find the facade for the tile we want
+	// find the facade for the tile we want
 	Common::Facade* pF = Common::Facade::findFacade(sTile);
 
 	// setup finder to look for animation point
@@ -171,39 +143,39 @@ void createRoadNetwork() {
 	// Straight road transformations
 	osg::Matrixf mRS0, mRS1, mRS2, mRS3, mRS4, mRS5, mRS6;
 
-	mRS1 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, TILE_SIZE, 0.0f);
-	mRS2 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(0.0f, TILE_SIZE * 3, 0.0f);
-	mRS3 = osg::Matrixf::translate(TILE_SIZE, TILE_SIZE * 5, 0.0f);
-	mRS4 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE * 3, 0.0f);
-	mRS5 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE * 2, 0.0f);
-	mRS6 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE, 0.0f);
+	mRS1 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize, g_fTileSize, 0.0f);
+	mRS2 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(0.0f, g_fTileSize * 3, 0.0f);
+	mRS3 = osg::Matrixf::translate(g_fTileSize, g_fTileSize * 5, 0.0f);
+	mRS4 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-g_fTileSize, g_fTileSize * 3, 0.0f);
+	mRS5 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-g_fTileSize, g_fTileSize * 2, 0.0f);
+	mRS6 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-g_fTileSize, g_fTileSize, 0.0f);
 
 	// Curved road transformations
 	osg::Matrixf mRC0, mRC1, mRC2, mRC3, mRC4, mRC5, mRC6, mRC7, mRC8, mRC9, mRC10;
 
-	mRC0 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, 0.0f, 0.0f);
-	mRC1 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE * 2, TILE_SIZE * 2, 0.0f);
-	mRC2 = osg::Matrixf::translate(TILE_SIZE, TILE_SIZE * 3, 0.0f);
-	mRC3 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE * 3, TILE_SIZE * 3, 0.0f);
-	mRC4 = osg::Matrixf::translate(0.0f, TILE_SIZE * 2, 0.0f);
-	mRC5 = osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE * 3, TILE_SIZE * 4, 0.0f);
-	mRC6 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, TILE_SIZE * 4, 0.0f);
-	mRC7 = osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE * 2, TILE_SIZE * 5, 0.0f);
-	mRC8 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(0.0f, TILE_SIZE * 5, 0.0f);
-	mRC9 = osg::Matrixf::translate(-TILE_SIZE, 0.0f, 0.0f);
-	mRC10 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-TILE_SIZE, TILE_SIZE * 4, 0.0f);
+	mRC0 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize, 0.0f, 0.0f);
+	mRC1 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize * 2, g_fTileSize * 2, 0.0f);
+	mRC2 = osg::Matrixf::translate(g_fTileSize, g_fTileSize * 3, 0.0f);
+	mRC3 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize * 3, g_fTileSize * 3, 0.0f);
+	mRC4 = osg::Matrixf::translate(0.0f, g_fTileSize * 2, 0.0f);
+	mRC5 = osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize * 3, g_fTileSize * 4, 0.0f);
+	mRC6 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize, g_fTileSize * 4, 0.0f);
+	mRC7 = osg::Matrixf::rotate(osg::DegreesToRadians(180.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize * 2, g_fTileSize * 5, 0.0f);
+	mRC8 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(0.0f, g_fTileSize * 5, 0.0f);
+	mRC9 = osg::Matrixf::translate(-g_fTileSize, 0.0f, 0.0f);
+	mRC10 = osg::Matrixf::rotate(osg::DegreesToRadians(270.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(-g_fTileSize, g_fTileSize * 4, 0.0f);
 
 	// T junction transformations
 	osg::Matrixf mRT0, mRT1;
 
-	mRT0 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(TILE_SIZE, TILE_SIZE * 2, 0.0f);
-	mRT1 = osg::Matrixf::translate(0.0f, TILE_SIZE * 4, 0.0f);
+	mRT0 = osg::Matrixf::rotate(osg::DegreesToRadians(90.0f), 0.0f, 0.0f, 1.0) * osg::Matrixf::translate(g_fTileSize, g_fTileSize * 2, 0.0f);
+	mRT1 = osg::Matrixf::translate(0.0f, g_fTileSize * 4, 0.0f);
 
 	// X junction transformations
 	osg::Matrixf mRX0, mRX1;
 
-	mRX0 = osg::Matrixf::translate(TILE_SIZE * 2, TILE_SIZE * 3, 0.0f);
-	mRX1 = osg::Matrixf::translate(TILE_SIZE * 2, TILE_SIZE * 4, 0.0f);
+	mRX0 = osg::Matrixf::translate(g_fTileSize * 2, g_fTileSize * 3, 0.0f);
+	mRX1 = osg::Matrixf::translate(g_fTileSize * 2, g_fTileSize * 4, 0.0f);
 
 	// Create straight roads
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("RoadTile", "RoadStraight0", Common::AssetLibrary::instance()->getAsset("Road-Straight"), mRS0, true)->root());
@@ -428,11 +400,12 @@ void createBuildings() {
 
 	mB0 = osg::Matrixf::scale(0.1f, 0.1f, 0.1f)*
 		osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f))*
-		osg::Matrixf::translate(-TILE_SIZE * 2, TILE_SIZE, 25.0f);
+		osg::Matrixf::translate(-g_fTileSize * 2, g_fTileSize, 25.0f);
 
 	// Create building
 	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("Building", "Building0", Common::AssetLibrary::instance()->cloneAsset("Asia-Building"), mB0, true)->root());
 }
+
 
 int main()
 {
@@ -478,6 +451,11 @@ int main()
 	// Create buildinfs
 	createBuildings();
 
+	// Add Shaders
+	Shader::ShaderUnit::setShaderPath("../../shaders/");
+	Shader::ShaderUnit::addShader("perPixel");
+	Shader::ShaderUnit::addShader("default");
+
 	// Initialise window Traits 
 	osg::GraphicsContext::Traits* pTraits = new osg::GraphicsContext::Traits();
 	pTraits->x = 20;
@@ -492,7 +470,7 @@ int main()
 
 	// Initialise GraphicsContext with window Traits
 	osg::GraphicsContext* pGraphicsContext = osg::GraphicsContext::createGraphicsContext(pTraits);
-
+	
 	// Pointer to viewer Camera
 	osg::Camera* pCamera = viewer.getCamera();
 
@@ -504,8 +482,11 @@ int main()
 	pCamera->setReadBuffer(buffer);
 	viewer.setCamera(pCamera);
 
-	// add event handlers
+	Shader::ShaderUnit::createCameraBasedUniformCallbacks(pCamera);
+
+	// Add event handlers
 	viewer.addEventHandler(new osgViewer::ThreadingHandler);
+	viewer.addEventHandler(new Shader::ShaderSwitcher(g_pRoot));
 	viewer.addEventHandler(new osgGA::StateSetManipulator(viewer.getCamera()->getOrCreateStateSet()));
 	viewer.addEventHandler(new osgViewer::WindowSizeHandler);
 	viewer.addEventHandler(new osgViewer::StatsHandler);
@@ -514,7 +495,6 @@ int main()
 	viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
 	viewer.addEventHandler(new Assignment::EventHandler());
 	viewer.addEventHandler(new InteractionHandler(keyFunction));
-
 
 	// Set the Scene to render
 	viewer.setSceneData(g_pRoot);

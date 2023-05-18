@@ -28,7 +28,7 @@ Assignment::AnimatedCar::AnimatedCar(std::string sName, osg::Node* pAsset, osg::
 	SelectionHandler* pSH = new SelectionHandler(this);
 	m_pRoot->setUserData(pSH);
 
-	// add a collision detector to the back of the car - we will not be using this, but can be used to stop cars running into each other
+	// add a collision detector to the back of the cars
 	m_pCollisionTarget->addChild(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0f, 0.0f, 0.0f), 50.0f)));
 	m_pCollisionTarget->setMatrix(osg::Matrix::translate(-50.0f, 0.0f, 0.0f));
 	m_pAnimationTransform->addChild(m_pCollisionTarget);

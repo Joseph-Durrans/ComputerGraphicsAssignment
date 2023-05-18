@@ -30,7 +30,8 @@ namespace Assignment
 		osg::Geode* m_pRed;
 		osg::Geode* m_pGreen;
 
-		osg::Vec3f m_WorldCollisionTarget;
+		// not wokring?
+		// osg::Vec3f m_vWorldCollisionTarget;
 
 
 		// Inherited via LightControl
