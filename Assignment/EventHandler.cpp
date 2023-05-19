@@ -46,9 +46,7 @@ bool Assignment::EventHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::G
                     // if a selection habalder is found
                     if (SelectionHandler* pSH = dynamic_cast<SelectionHandler*>((*it)->getUserData()))
                     {
-                        std::cout << "Clicked something" << std::endl;
-
-                        //text to see what type of object facade it is and apply functionallity
+                        //test to see what type of object facade it is and apply functionallity
                         if (AnimatedCar* pAC = dynamic_cast<AnimatedCar*>(pSH->facade()))
                         {
                             std::cout << "Clicked car" << std::endl;

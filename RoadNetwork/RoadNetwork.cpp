@@ -425,7 +425,7 @@ void createBuildings() {
 		osg::Matrixf::translate(-g_fTileSize * 2, g_fTileSize, 25.0f);
 
 	// Create building
-	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("Building", "Building0", Common::AssetLibrary::instance()->cloneAsset("Asia-Building"), mB0, true)->root());
+	g_pRoot->addChild(Common::FacadeManufactory::instance()->create("Building", "Building0", Common::AssetLibrary::instance()->getAsset("Building-Set"), mB0, true)->root());
 }
 
 
@@ -462,7 +462,7 @@ int main()
 	Common::AssetLibrary::instance()->loadAsset("Car-Dumptruck", "../../OpenSceneGraph-Data/dumptruck.osgt");
 	Common::AssetLibrary::instance()->loadAsset("Car-Delta", "../../Data/Lancia-Delta.obj");
 	Common::AssetLibrary::instance()->loadAsset("Car-Stratos", "../../Data/Lancia-Stratos/source/lshfg4.fbx");
-	Common::AssetLibrary::instance()->loadAsset("Asia-Building", "../../Data/building-set/source/building.fbx");
+	Common::AssetLibrary::instance()->loadAsset("Building-Set", "../../Data/building-set/source/building.fbx");
 
 	// Create road network
 	createRoadNetwork();

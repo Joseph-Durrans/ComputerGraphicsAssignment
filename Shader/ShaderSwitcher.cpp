@@ -26,6 +26,7 @@ bool Shader::ShaderSwitcher::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUI
 			std::cout << "Viewer help - shader options" << std::endl;
 			std::cout << "\tp - per pixel lighting shader" << std::endl;
 			std::cout << "\td - per vertex lighting shader" << std::endl;
+			// Struggling to get these to work
 			std::cout << "\tr - reload and rebuild shaders (see shader dir)" << std::endl;
 			std::cout << "\t1 - toggle ambient lighting on/off" << std::endl;
 			std::cout << "\t2 - toggle diffuse lighting on/off" << std::endl;
